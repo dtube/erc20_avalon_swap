@@ -668,8 +668,9 @@ let delay = 1500
 
 class ContractWatcher {
     constructor(address) {
+        console.log('Watching '+config.ethContractAddress+'@eth')
         this.address = address.toLowerCase();
-        this.web3 = new Web3("https://kovan.infura.io/v3/9c32bf00f50e4ba0b14b18f6d155e60c");
+        this.web3 = new Web3("https://kovan.infura.io/v3/"+config.infuraKey);
     }
 
     async checkBlock(number) {
@@ -678,6 +679,9 @@ class ContractWatcher {
             setTimeout(function() {WDTCWatcher.checkBlock(number)}, delay)
             return
         }
+
+        headblocks.eth = number
+
         let secondsAgo = Math.round(new Date().getTime()/1000 - block.timestamp)
         let transactions = block.transactions;
         if (number%config.blocksDisplay === 0)
@@ -688,23 +692,25 @@ class ContractWatcher {
                 let tx = await this.web3.eth.getTransaction(txHash);
                 if (tx.to && this.address == tx.to.toLowerCase()) {
                     var decodedTx = decoder.decodeData(tx.input)
-                    let avalonReceiver = decodedTx.inputs[1]
-                    let amount = decodedTx.inputs[0].toNumber()
-                    console.log('transferToAvalon', avalonReceiver, amount)
-                    var newTx = {
-                        type: javalon.TransactionType.TRANSFER,
-                        data: {
-                            receiver: avalonReceiver,
-                            amount: amount,
-                            memo: tx.hash
+                    if (decodedTx.method === 'transferToAvalon') {
+                        let avalonReceiver = decodedTx.inputs[1]
+                        let amount = decodedTx.inputs[0].toNumber()
+                        console.log('transferToAvalon', avalonReceiver, amount)
+                        var newTx = {
+                            type: javalon.TransactionType.TRANSFER,
+                            data: {
+                                receiver: avalonReceiver,
+                                amount: amount,
+                                memo: tx.hash
+                            }
                         }
-                    }
-                    
-                    newTx = javalon.sign(config.avalonSwapKey, config.avalonSwapAccount, newTx)
+                        // newTx = javalon.sign(config.avalonSwapKey, config.avalonSwapAccount, newTx)
+                    } else
+                        console.log('Other method: '+decodedTx.method)
                 }
             }
         }
-        headblocks.eth = number
+        
         setTimeout(function() {WDTCWatcher.checkBlock(1+number)}, 1)
     }
 }

@@ -17,10 +17,12 @@ class AvalonWatcher {
                 return
             }
 
+            headblocks.avalon = number
+
             let secondsAgo = Math.round((new Date().getTime() - block.timestamp)/1000)
             let transactions = block.txs;
             if (number%config.blocksDisplay === 0)
-                console.log('Avalon at Block #'+number+' '+secondsAgo+'s ago');
+                console.log('Avalon Block #'+number+' '+secondsAgo+'s ago');
             if (block.txs != null && block.txs.length > 0) {
                 for (let i = 0; i < block.txs.length; i++) {
                     let tx = block.txs[i]
@@ -30,19 +32,19 @@ class AvalonWatcher {
                         console.log('transfer', tx.sender, amount, memo)
                         if (!memo) {
                             console.log('Error, tx without memo')
-                            return
+                            continue
                         }
                         let memoParsed = memo.split('@')
                         if (memoParsed.length !== 2) {
                             console.log('Error, memo invalid')
-                            return
+                            continue
                         }
                         let destinationNetwork = memoParsed[1]
                         let destinationAddress = memoParsed[0]
 
                         if (destinationNetwork !== 'eth') {
                             console.log('Error, network is not ethereum')
-                            return
+                            continue
                         }
                         
                         try {
@@ -62,10 +64,8 @@ class AvalonWatcher {
                     }
                 }
             }
-            headblocks.avalon = number
             setTimeout(function() {DTCWatcher.checkBlock(1+number)}, 1)
         })
-            
     }
 }
 
