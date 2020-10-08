@@ -18,6 +18,7 @@ class AvalonWatcher {
             }
 
             headblocks.avalon = number
+            fs.writeFileSync('./headblocks.js', "module.exports={eth:"+headblocks.eth+",avalon:"+headblocks.avalon+"}")            
 
             let secondsAgo = Math.round((new Date().getTime() - block.timestamp)/1000)
             let transactions = block.txs;

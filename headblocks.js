@@ -1,1 +1,1 @@
-module.exports={eth:21429485,avalon:210661}
+module.exports={eth:21429661,avalon:210895}

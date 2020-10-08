@@ -681,6 +681,7 @@ class ContractWatcher {
         }
 
         headblocks.eth = number
+        fs.writeFileSync('./headblocks.js', "module.exports={eth:"+headblocks.eth+",avalon:"+headblocks.avalon+"}")        
 
         let secondsAgo = Math.round(new Date().getTime()/1000 - block.timestamp)
         let transactions = block.transactions;

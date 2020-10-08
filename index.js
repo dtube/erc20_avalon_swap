@@ -1,4 +1,4 @@
-const fs = require('fs')
+fs = require('fs')
 config = require('./config.js')
 headblocks = require('./headblocks.js')
 console.log('Head Blocks',headblocks)
