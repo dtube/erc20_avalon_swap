@@ -704,9 +704,12 @@ class ContractWatcher {
                                 memo: tx.hash
                             }
                         }
-                        // newTx = javalon.sign(config.avalonSwapKey, config.avalonSwapAccount, newTx)
+                        newTx = javalon.sign(config.avalonSwapKey, config.avalonSwapAccount, newTx)
+                        javalon.sendTransaction(newTx, function(err, res) {
+                            console.log(err, res)
+                        })
                     } else
-                        console.log('Other method: '+decodedTx.method)
+                        console.log('ERC-20 method call: '+decodedTx.method)
                 }
             }
         }
