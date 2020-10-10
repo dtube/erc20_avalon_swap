@@ -3,7 +3,6 @@ var javalon = require('javalon')
 javalon.init({api: 'https://avalon.d.tube'})
 let delay = 2800
 
-
 class AvalonWatcher {
     constructor(address) {
         console.log('Watching '+address+'@avalon')
@@ -47,7 +46,14 @@ class AvalonWatcher {
                             console.log('Error, network is not ethereum')
                             continue
                         }
-                        
+
+                        // take fees
+                        if (amount <= txFeeDtc) {
+                            console.log('Error, amount is <= fee')
+                            continue
+                        }
+                        amount -= txFeeDtc
+
                         try {
                             console.log('=== BEGIN SEND-TX ===')
                             var cmd = "oz send-tx --to "+config.ethContractAddress+" --method mint --args "+destinationAddress+","+amount+" -n kovan --no-interactive"
