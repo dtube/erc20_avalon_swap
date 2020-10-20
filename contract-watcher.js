@@ -665,6 +665,8 @@ const decoder = new InputDataDecoder([
 var javalon = require('javalon')
 javalon.init({api: 'https://avalon.d.tube'})
 let delay = 1500
+let blocksToConfirm = 5
+let toConfirm = {}
 
 class ContractWatcher {
     constructor(address) {
@@ -686,7 +688,9 @@ class ContractWatcher {
         let secondsAgo = Math.round(new Date().getTime()/1000 - block.timestamp)
         let transactions = block.transactions;
         if (number%config.blocksDisplay === 0)
-            console.log('Ethereum Block #'+number+' '+secondsAgo+'s ago');
+            console.log('Ethereum Block #'+number+' '+secondsAgo+'s ago')
+        
+        this.verifyTxStatus(number)
 
         if (block != null && block.transactions != null) {
             for (let txHash of block.transactions) {
@@ -696,19 +700,20 @@ class ContractWatcher {
                     if (decodedTx.method === 'transferToAvalon') {
                         let avalonReceiver = decodedTx.inputs[1]
                         let amount = decodedTx.inputs[0].toNumber()
-                        console.log('transferToAvalon', avalonReceiver, amount)
-                        var newTx = {
-                            type: javalon.TransactionType.TRANSFER,
-                            data: {
+                        if (toConfirm[number+blocksToConfirm])
+                            toConfirm[number+blocksToConfirm].push({
+                                hash:tx.hash,
                                 receiver: avalonReceiver,
-                                amount: amount,
-                                memo: tx.hash
-                            }
-                        }
-                        newTx = javalon.sign(config.avalonSwapKey, config.avalonSwapAccount, newTx)
-                        javalon.sendTransaction(newTx, function(err, res) {
-                            console.log(err, res)
-                        })
+                                amount: amount
+                            })
+                        else
+                            toConfirm[number+blocksToConfirm] = [{
+                                hash:tx.hash,
+                                receiver: avalonReceiver,
+                                amount: amount
+                            }]
+                        
+                        console.log('transferToAvalon', avalonReceiver, amount, tx.hash)
                     } else
                         console.log('ERC-20 method call: '+decodedTx.method)
                 }
@@ -716,6 +721,35 @@ class ContractWatcher {
         }
         
         setTimeout(function() {WDTCWatcher.checkBlock(1+number)}, 1)
+    }
+
+    async verifyTxStatus(number) {
+        if (!toConfirm[number])
+            return
+        for (let i = 0; i < toConfirm[number].length; i++) {
+            let hash = toConfirm[number][i].hash
+            let amount = toConfirm[number][i].amount
+            let receiver = toConfirm[number][i].receiver
+            this.web3.eth.getTransactionReceipt(hash, function(err, res) {
+                console.log(err, res)
+                if (!err && res && res.status === true) {
+                    var newTx = {
+                        type: javalon.TransactionType.TRANSFER,
+                        data: {
+                            receiver: receiver,
+                            amount: amount,
+                            memo: hash
+                        }
+                    }
+                    newTx = javalon.sign(config.avalonSwapKey, config.avalonSwapAccount, newTx)
+                    console.log(newTx)
+                    // javalon.sendTransaction(newTx, function(err, res) {
+                    //     console.log(err, res)
+                    // })
+                }
+            })
+        }
+        delete toConfirm[number]
     }
 }
 

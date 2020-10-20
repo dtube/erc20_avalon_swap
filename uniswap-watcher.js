@@ -2,7 +2,7 @@
 // and allows calculating DTC / ETH price
 let tokenAddress = config.ethContractAddress
 let wethAddress = '0xd0a1e359811322d97991e03f863a0c30c2cf029c'
-let uniswapWallet = '0xd5c9c2329323c95ebe43f66673b789edf6e50c74'
+let uniswapWallet = '0xc722cd5b8e079cce5e513f1451d287f5c23298cf'
 let minErc20ABI = [
     {
     "constant":true,

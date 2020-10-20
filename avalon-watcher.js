@@ -11,6 +11,7 @@ class AvalonWatcher {
 
     async checkBlock(number) {
         javalon.getBlock(number, function(err, block) {
+            // if (err) console.log(err)
             if (err || !block) {
                 setTimeout(function() {DTCWatcher.checkBlock(number)}, delay)
                 return

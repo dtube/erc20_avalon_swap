@@ -1,4 +1,4 @@
-const { projectId, mnemonic } = require('./secrets.json');
+const { projectId, mnemonic, privateKeys } = require('./secrets.json');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
     },
     kovan: {
       provider: () => new HDWalletProvider(
-	      mnemonic, `https://kovan.infura.io/v3/${projectId}`
+	      privateKeys, `https://kovan.infura.io/v3/${projectId}`
       ),
       networkId: 42,
       gasPrice: 10e9
