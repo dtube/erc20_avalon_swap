@@ -731,7 +731,6 @@ class ContractWatcher {
             let amount = toConfirm[number][i].amount
             let receiver = toConfirm[number][i].receiver
             this.web3.eth.getTransactionReceipt(hash, function(err, res) {
-                console.log(err, res)
                 if (!err && res && res.status === true) {
                     var newTx = {
                         type: javalon.TransactionType.TRANSFER,
@@ -742,10 +741,10 @@ class ContractWatcher {
                         }
                     }
                     newTx = javalon.sign(config.avalonSwapKey, config.avalonSwapAccount, newTx)
-                    console.log(newTx)
-                    // javalon.sendTransaction(newTx, function(err, res) {
-                    //     console.log(err, res)
-                    // })
+
+                    javalon.sendTransaction(newTx, function(err, res) {
+                        console.log(err, res)
+                    })
                 }
             })
         }
