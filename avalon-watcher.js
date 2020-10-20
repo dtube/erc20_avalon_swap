@@ -2,6 +2,28 @@ var {spawn} = require('child_process');
 var javalon = require('javalon')
 javalon.init({api: 'https://avalon.d.tube'})
 let delay = 2800
+let txQueue = []
+let isTransactioning = false
+setInterval(function() {
+    if (!isTransactioning && txQueue && txQueue.length > 0) {
+        try {
+            isTransactioning = true
+            console.log('=== BEGIN SEND-TX ===')
+            let cmd = txQueue[0]
+            txQueue.splice(0,1)
+            let mintWdtc = spawn('npx', cmd.split(' '));     
+            mintWdtc.stderr.on('data', (data) => {
+                console.error(data.toString());
+            });
+            mintWdtc.on('close', (code) => {
+                isTransactioning = false
+                console.log(`=== END SEND-TX: ${code} ===`);
+            });
+        } catch (error) {
+            throw err
+        }
+    }
+}, 5000)
 
 class AvalonWatcher {
     constructor(address) {
@@ -9,7 +31,7 @@ class AvalonWatcher {
         this.address = address
     }
 
-    async checkBlock(number) {
+    checkBlock(number) {
         javalon.getBlock(number, function(err, block) {
             // if (err) console.log(err)
             if (err || !block) {
@@ -54,21 +76,8 @@ class AvalonWatcher {
                             continue
                         }
                         amount -= txFeeDtc
-
-                        try {
-                            console.log('=== BEGIN SEND-TX ===')
-                            var cmd = "oz send-tx --to "+config.ethContractAddress+" --method mint --args "+destinationAddress+","+amount+" -n kovan --no-interactive"
-                            var mintWdtc = spawn('npx', cmd.split(' '));     
-                            mintWdtc.stderr.on('data', (data) => {
-                                console.error(data.toString());
-                            });
-                            mintWdtc.on('close', (code) => {
-                                console.log(`=== END SEND-TX: ${code} ===`);
-                            });
-                        } catch (error) {
-                            console.log(error)
-                        }
-                        
+                        var cmd = "oz send-tx --to "+config.ethContractAddress+" --method mint --args "+destinationAddress+","+amount+" -n kovan --no-interactive"
+                        txQueue.push(cmd)
                     }
                 }
             }
