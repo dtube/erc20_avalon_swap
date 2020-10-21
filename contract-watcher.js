@@ -695,7 +695,7 @@ class ContractWatcher {
         if (block != null && block.transactions != null) {
             for (let txHash of block.transactions) {
                 let tx = await this.web3.eth.getTransaction(txHash);
-                if (tx.to && this.address == tx.to.toLowerCase()) {
+                if (tx && tx.to && this.address == tx.to.toLowerCase()) {
                     var decodedTx = decoder.decodeData(tx.input)
                     if (decodedTx.method === 'transferToAvalon') {
                         let avalonReceiver = decodedTx.inputs[1]
