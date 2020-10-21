@@ -24,8 +24,12 @@ module.exports = async function(cb) {
 
     balanceDtc /= Math.pow(10,2)
     balanceWeth /= Math.pow(10,18)
+    
+    if (balanceWeth / balanceDtc != dtcEther) {
+        dtcEther = balanceWeth / balanceDtc
+        console.log('DTUBE/ETH = '+dtcEther)
+        updateFee()
+    }
 
-    dtcEther = balanceWeth / balanceDtc
-    console.log('DTUBE/ETH = '+dtcEther)
     if (cb) cb()
 }

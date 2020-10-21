@@ -10,6 +10,13 @@ ethGasPrice = null
 txFeeDtc = null
 const updateDtcEther = require('./uniswap-watcher.js')
 const updateGasPrice = require('./gas-price.js')
+updateFee = function() {
+    if (!dtcEther || !ethGasPrice) return
+    let avgGasUsedPerTx = 38074
+    let txFeeEth = ethGasPrice * avgGasUsedPerTx / Math.pow(10, 18)
+    txFeeDtc = Math.ceil(100 * txFeeEth / dtcEther)
+    console.log('Tx Fee: '+txFeeEth+' ETH or '+txFeeDtc/100+' DTUBE')
+}
 
 updateDtcEther(function(){
     updateGasPrice(function() {
