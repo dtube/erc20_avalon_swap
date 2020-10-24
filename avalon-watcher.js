@@ -62,7 +62,7 @@ class AvalonWatcher {
                             console.log('Error, memo invalid')
                             continue
                         }
-                        let destinationNetwork = memoParsed[1]
+                        let destinationNetwork = memoParsed[1].toLowerCase()
                         let destinationAddress = memoParsed[0]
 
                         if (destinationNetwork !== 'eth') {

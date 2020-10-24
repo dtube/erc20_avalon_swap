@@ -664,7 +664,7 @@ const decoder = new InputDataDecoder([
 ]);
 var javalon = require('javalon')
 javalon.init({api: 'https://avalon.d.tube'})
-let delay = 1500
+let delay = 10000
 let blocksToConfirm = 5
 let toConfirm = {}
 
@@ -672,7 +672,7 @@ class ContractWatcher {
     constructor(address) {
         console.log('Watching '+config.ethContractAddress+'@eth')
         this.address = address.toLowerCase();
-        this.web3 = new Web3("https://kovan.infura.io/v3/"+config.infuraKey);
+        this.web3 = new Web3('https://cloudflare-eth.com');
     }
 
     async checkBlock(number) {

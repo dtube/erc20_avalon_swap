@@ -1,8 +1,8 @@
 // this loads the pooled liquidities on uniswap
 // and allows calculating DTC / ETH price
 let tokenAddress = config.ethContractAddress
-let wethAddress = '0xd0a1e359811322d97991e03f863a0c30c2cf029c'
-let uniswapWallet = '0xc722cd5b8e079cce5e513f1451d287f5c23298cf'
+let wethAddress = config.wethTokenAddress
+let uniswapWallet = config.uniswapPoolAddress
 let minErc20ABI = [
     {
     "constant":true,
@@ -13,7 +13,7 @@ let minErc20ABI = [
     }
 ];
 const Web3 = require('web3')
-let web3 = new Web3("https://kovan.infura.io/v3/"+config.infuraKey)
+let web3 = new Web3('https://cloudflare-eth.com');
 
 module.exports = async function(cb) {
     let contractDtc = new web3.eth.Contract(minErc20ABI, tokenAddress)
