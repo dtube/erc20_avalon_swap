@@ -76,7 +76,7 @@ class AvalonWatcher {
                             continue
                         }
                         amount -= txFeeDtc
-                        var cmd = "oz send-tx --to "+config.ethContractAddress+" --method mint --args "+destinationAddress+","+amount+" -n kovan --no-interactive"
+                        var cmd = "oz send-tx --to "+config.ethContractAddress+" --method transfer --args "+destinationAddress+","+amount+" -n mainnet --no-interactive"
                         txQueue.push(cmd)
                     }
                 }

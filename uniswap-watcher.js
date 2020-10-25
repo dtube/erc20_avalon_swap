@@ -13,7 +13,7 @@ let minErc20ABI = [
     }
 ];
 const Web3 = require('web3')
-let web3 = new Web3('https://cloudflare-eth.com');
+let web3 = new Web3('https://mainnet.infura.io/v3/'+config.infuraKey);
 
 module.exports = async function(cb) {
     let contractDtc = new web3.eth.Contract(minErc20ABI, tokenAddress)
@@ -24,6 +24,8 @@ module.exports = async function(cb) {
 
     balanceDtc /= Math.pow(10,2)
     balanceWeth /= Math.pow(10,18)
+    
+    console.log('UNI Pool: '+balanceDtc+' DTUBE + '+balanceWeth+' ETH')
     
     if (balanceWeth / balanceDtc != dtcEther) {
         dtcEther = balanceWeth / balanceDtc

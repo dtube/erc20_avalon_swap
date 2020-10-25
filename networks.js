@@ -22,7 +22,8 @@ module.exports = {
       provider: () => new HDWalletProvider(
 	      privateKeys, `https://mainnet.infura.io/v3/${projectId}`
       ),
-      networkId: 1
+      networkId: 1,
+      gasPrice: 17e9
     }
   },
 };
