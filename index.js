@@ -8,8 +8,8 @@ console.log('Head Blocks',headblocks)
 dtcEther = null
 ethGasPrice = null
 txFeeDtc = null
-const updateDtcEther = require('./uniswap-watcher.js')
-const updateGasPrice = require('./gas-price.js')
+updateDtcEther = require('./uniswap-watcher.js')
+updateGasPrice = require('./gas-price.js')
 updateFee = function() {
     if (!dtcEther || !ethGasPrice) return
     let avgGasUsedPerTx = 38074

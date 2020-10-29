@@ -8,17 +8,19 @@ setInterval(function() {
     if (!isTransactioning && txQueue && txQueue.length > 0) {
         try {
             isTransactioning = true
-            console.log('=== BEGIN SEND-TX ===')
-            let cmd = txQueue[0]
-            txQueue.splice(0,1)
-            let mintWdtc = spawn('npx', cmd.split(' '));     
-            mintWdtc.stderr.on('data', (data) => {
-                console.error(data.toString());
-            });
-            mintWdtc.on('close', (code) => {
-                isTransactioning = false
-                console.log(`=== END SEND-TX: ${code} ===`);
-            });
+            updateGasPrice(function() {
+                console.log('=== BEGIN SEND-TX ===')
+                let cmd = txQueue[0]+
+                txQueue.splice(0,1)
+                let mintWdtc = spawn('npx', cmd.split(' '));     
+                mintWdtc.stderr.on('data', (data) => {
+                    console.error(data.toString());
+                });
+                mintWdtc.on('close', (code) => {
+                    isTransactioning = false
+                    console.log(`=== END SEND-TX: ${code} ===`);
+                });
+            })
         } catch (error) {
             throw err
         }
@@ -76,7 +78,10 @@ class AvalonWatcher {
                             continue
                         }
                         amount -= txFeeDtc
-                        var cmd = "oz send-tx --to "+config.ethContractAddress+" --method transfer --args "+destinationAddress+","+amount+" -n mainnet --no-interactive"
+                        var cmd = "oz send-tx --to "+config.ethContractAddress
+                        cmd += " --method transfer --args "+destinationAddress+","+amount
+                        cmd += " -n mainnet --no-interactive"
+                        cmd += " --price "+(updateGasPrice+config.extraGasPrice)
                         txQueue.push(cmd)
                     }
                 }
