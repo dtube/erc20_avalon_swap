@@ -10,7 +10,7 @@ setInterval(function() {
             isTransactioning = true
             updateGasPrice(function() {
                 console.log('=== BEGIN SEND-TX ===')
-                let cmd = txQueue[0]+
+                let cmd = txQueue[0] + " --price "+Math.round(ethGasPrice*(1+config.extraGasPrice))
                 txQueue.splice(0,1)
                 let mintWdtc = spawn('npx', cmd.split(' '));     
                 mintWdtc.stderr.on('data', (data) => {
@@ -81,7 +81,6 @@ class AvalonWatcher {
                         var cmd = "oz send-tx --to "+config.ethContractAddress
                         cmd += " --method transfer --args "+destinationAddress+","+amount
                         cmd += " -n mainnet --no-interactive"
-                        cmd += " --price "+(updateGasPrice+config.extraGasPrice)
                         txQueue.push(cmd)
                     }
                 }
