@@ -10,7 +10,9 @@ setInterval(function() {
             isTransactioning = true
             updateGasPrice(function() {
                 console.log('=== BEGIN SEND-TX ===')
-                let cmd = txQueue[0] + " --price "+Math.round(ethGasPrice*(1+config.extraGasPrice))
+                let gasPrice = Math.round(ethGasPrice*(1+config.gasBoost))
+                console.log('Gas Price Used: '+gasPrice+' wei')
+                let cmd = txQueue[0] + " --price "+gasPrice
                 txQueue.splice(0,1)
                 let mintWdtc = spawn('npx', cmd.split(' '));     
                 mintWdtc.stderr.on('data', (data) => {
